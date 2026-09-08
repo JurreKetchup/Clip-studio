@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clip Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark"></span>
+    <span class="brand-name">Clip Studio</span>
+  </div>
+  <div class="topbar-status" id="backend-status">backend controleren…</div>
+</header>
+
+<main class="layout">
+
+  <section class="panel panel-input">
+    <h1 class="hero-title">Van lange video<br>naar clips die scrollen stoppen.</h1>
+    <p class="hero-sub">Gooi er een YouTube-link of bestand in. De AI knipt de beste momenten eruit, met ondertiteling erin gebrand.</p>
+
+    <div class="field-group">
+      <label class="field-label">Bron</label>
+      <div class="tabs" id="source-tabs">
+        <button class="tab active" data-tab="youtube">YouTube-link</button>
+        <button class="tab" data-tab="file">Video-bestand</button>
+      </div>
+
+      <div class="tab-panel" id="tab-youtube">
+        <input type="url" id="youtube-url" placeholder="https://www.youtube.com/watch?v=..." class="text-input">
+      </div>
+      <div class="tab-panel hidden" id="tab-file">
+        <label class="dropzone" id="dropzone">
+          <input type="file" id="file-input" accept="video/mp4,video/quicktime,video/x-matroska,video/webm" hidden>
+          <span id="dropzone-text">Sleep een video hierheen, of klik om te kiezen</span>
+          <span class="dropzone-hint">MP4 / MOV / MKV / WEBM — max. 60 minuten</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group half">
+        <label class="field-label">Aantal clips</label>
+        <div class="range-pair">
+          <input type="number" id="min-clips" value="3" min="1" max="20" class="text-input small">
+          <span class="range-sep">–</span>
+          <input type="number" id="max-clips" value="8" min="1" max="20" class="text-input small">
+        </div>
+      </div>
+      <div class="field-group half">
+        <label class="field-label">Cliplengte (sec)</label>
+        <div class="range-pair">
+          <input type="number" id="preferred-seconds" value="30" min="5" max="180" class="text-input small">
+          <span class="range-sep">tot max</span>
+          <input type="number" id="max-clip-seconds" value="60" min="5" max="180" class="text-input small">
+        </div>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group half">
+        <label class="field-label">Beeldverhouding</label>
+        <select id="aspect-ratio" class="text-input">
+          <option value="9:16" selected>9:16 — Shorts / Reels / TikTok</option>
+          <option value="1:1">1:1 — Vierkant</option>
+          <option value="16:9">16:9 — Breedbeeld</option>
+        </select>
+      </div>
+      <div class="field-group half">
+        <label class="field-label">Resolutie</label>
+        <select id="resolution" class="text-input">
+          <option value="1080" selected>1080 × 1920</option>
+          <option value="720">720 × 1280</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">AI-model voor clipselectie</label>
+      <select id="llm-provider" class="text-input">
+        <option value="groq" selected>Groq (Llama)</option>
+        <option value="anthropic">Anthropic (Claude)</option>
+      </select>
+    </div>
+
+    <div class="field-group toggles">
+      <label class="toggle"><input type="checkbox" id="subtitles" checked><span>Ondertiteling inbranden</span></label>
+      <label class="toggle"><input type="checkbox" id="hook" checked><span>Hook-tekst op scherm</span></label>
+      <label class="toggle"><input type="checkbox" id="highest-quality"><span>Hoogste kwaliteit (langzamer)</span></label>
+    </div>
+
+    <button class="btn-primary" id="start-btn">Start clipping</button>
+    <p class="error-text hidden" id="error-text"></p>
+  </section>
+
+  <section class="panel panel-output">
+    <div class="queue-header">
+      <h2>Wachtrij</h2>
+      <span class="queue-count" id="queue-count">0 clips gemaakt</span>
+    </div>
+
+    <div class="progress-track hidden" id="progress-wrap">
+      <div class="progress-status" id="progress-status">In wachtrij…</div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+
+    <div class="clip-grid" id="clip-grid">
+      <div class="empty-state" id="empty-state">
+        Nog geen clips. Vul links een bron in en klik op <strong>Start clipping</strong>.
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
